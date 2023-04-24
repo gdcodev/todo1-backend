@@ -36,14 +36,14 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
-  @HasRoles(Role.Admin)
+  @HasRoles(Role.Admin, Role.User)
   @UseGuards(AccessTokenGuard, RolesGuard)
   @Get(':id')
   async findOne(@Param('id', MongoIdPipe) id: mongoose.Types.ObjectId) {
     return this.usersService.findOne(id);
   }
 
-  @HasRoles(Role.Admin)
+  @HasRoles(Role.Admin, Role.User)
   @UseGuards(AccessTokenGuard, RolesGuard)
   @Put(':id')
   async update(
