@@ -1,5 +1,6 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
+import { Card } from 'src/cards/schemas/card.schema';
 import { getFormatNumberDecimal } from 'src/common/format-number-decimal';
 import { PaymentMethod } from 'src/common/payment-method.enum';
 import { User } from 'src/users/schemas/user.schema';
@@ -31,8 +32,8 @@ export class Sale {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
   user: User;
 
-  //   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Card' })
-  //   card: Card;
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Card' })
+  card: Card;
 }
 
 export const SaleSchema = SchemaFactory.createForClass(Sale);
