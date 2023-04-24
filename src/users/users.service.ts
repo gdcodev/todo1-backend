@@ -21,16 +21,29 @@ export class UsersService {
   ) {}
   async create(createUserDto: CreateUserDto) {
     try {
-      const { email } = createUserDto;
+      const { username, email } = createUserDto;
       const checkEmail = await this.userModel.findOne({
         email,
       });
       if (checkEmail) {
-        throw new HttpException('The email already exits', 403);
+        throw new HttpException('The email already exits', 400);
+      }
+      const checkUsername = await this.userModel.findOne({
+        username,
+      });
+      if (checkUsername) {
+        throw new HttpException('The username already exits', 400);
       }
       const newUser = new this.userModel(createUserDto);
       const createdUser = await newUser.save();
-      return createdUser;
+      if (createdUser) {
+        return {
+          message: 'User created successfully',
+        };
+      }
+      return {
+        message: 'Failed to create user',
+      };
     } catch (error) {
       throw new HttpException(
         error.message,

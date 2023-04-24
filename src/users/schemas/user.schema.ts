@@ -11,6 +11,21 @@ export class User {
     required: true,
     trim: true,
   })
+  name: string;
+
+  @Prop({
+    type: String,
+    required: true,
+    trim: true,
+  })
+  lastName: string;
+
+  @Prop({
+    type: String,
+    required: true,
+    unique: true,
+    trim: true,
+  })
   username: string;
 
   @Prop({

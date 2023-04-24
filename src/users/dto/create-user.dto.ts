@@ -5,10 +5,19 @@ import {
   MinLength,
   IsEnum,
   Matches,
+  IsOptional,
 } from 'class-validator';
 import { Role } from 'src/common/role.enum';
 
 export class CreateUserDto {
+  @IsString()
+  @IsNotEmpty()
+  name: string;
+
+  @IsString()
+  @IsNotEmpty()
+  lastName: string;
+
   @IsString()
   @IsNotEmpty()
   username: string;
@@ -26,6 +35,7 @@ export class CreateUserDto {
   })
   password: string;
 
+  @IsOptional()
   @IsEnum([Role.Admin, Role.User])
   @IsNotEmpty()
   role: string;

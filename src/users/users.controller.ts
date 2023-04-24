@@ -22,31 +22,29 @@ import { UseGuards } from '@nestjs/common/decorators';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @HasRoles(Role.Admin)
-  @UseGuards(AccessTokenGuard, RolesGuard)
-  @Post()
-  async create(@Body() createUserDto: CreateUserDto) {
+  @Post('register')
+  create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
   }
 
   @HasRoles(Role.Admin)
   @UseGuards(AccessTokenGuard, RolesGuard)
   @Get()
-  async findAll() {
+  findAll() {
     return this.usersService.findAll();
   }
 
   @HasRoles(Role.Admin, Role.User)
   @UseGuards(AccessTokenGuard, RolesGuard)
   @Get(':id')
-  async findOne(@Param('id', MongoIdPipe) id: mongoose.Types.ObjectId) {
+  findOne(@Param('id', MongoIdPipe) id: mongoose.Types.ObjectId) {
     return this.usersService.findOne(id);
   }
 
   @HasRoles(Role.Admin, Role.User)
   @UseGuards(AccessTokenGuard, RolesGuard)
   @Put(':id')
-  async update(
+  update(
     @Param('id', MongoIdPipe) id: mongoose.Types.ObjectId,
     @Body() updateUserDto: UpdateUserDto,
   ) {
@@ -56,7 +54,7 @@ export class UsersController {
   @HasRoles(Role.Admin)
   @UseGuards(AccessTokenGuard, RolesGuard)
   @Delete(':id')
-  async remove(@Param('id', MongoIdPipe) id: mongoose.Types.ObjectId) {
+  remove(@Param('id', MongoIdPipe) id: mongoose.Types.ObjectId) {
     return this.usersService.remove(id);
   }
 }
