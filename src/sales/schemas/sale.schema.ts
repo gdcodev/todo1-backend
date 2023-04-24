@@ -7,7 +7,11 @@ import { User } from 'src/users/schemas/user.schema';
 
 export type SaleDocument = Sale & Document;
 
-@Schema({ timestamps: true, versionKey: false, toJSON: { getters: true } })
+@Schema({
+  timestamps: true,
+  versionKey: false,
+  toJSON: { getters: true, virtuals: false },
+})
 export class Sale {
   @Prop({
     type: Date,
@@ -16,11 +20,11 @@ export class Sale {
   date: Date;
 
   @Prop({
-    type: mongoose.Schema.Types.ObjectId,
+    type: mongoose.Schema.Types.Decimal128,
     required: true,
     get: getFormatNumberDecimal,
   })
-  total: mongoose.Schema.Types.ObjectId;
+  total: mongoose.Schema.Types.Decimal128;
 
   @Prop({
     type: String,
