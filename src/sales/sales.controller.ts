@@ -6,14 +6,21 @@ import {
   Put,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { SalesService } from './sales.service';
 import { CreateSaleDto } from './dto/create-sale.dto';
 import { UpdateSaleDto } from './dto/update-sale.dto';
 import { MongoIdPipe } from 'src/common/mongo-id.pipe';
 import mongoose from 'mongoose';
+import { HasRoles } from 'src/common/has-decorator.decorator';
+import { Role } from 'src/common/role.enum';
+import { AccessTokenGuard } from 'src/auth/guards/access-token.guard';
+import { RolesGuard } from 'src/auth/guards/role.guard';
 
 @Controller('sales')
+@HasRoles(Role.Admin, Role.User)
+@UseGuards(AccessTokenGuard, RolesGuard)
 export class SalesController {
   constructor(private readonly salesService: SalesService) {}
 

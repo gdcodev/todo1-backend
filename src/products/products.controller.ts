@@ -19,26 +19,32 @@ import { MongoIdPipe } from 'src/common/mongo-id.pipe';
 import mongoose from 'mongoose';
 
 @Controller('products')
-@HasRoles(Role.Admin)
-@UseGuards(AccessTokenGuard, RolesGuard)
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
+  @HasRoles(Role.Admin)
+  @UseGuards(AccessTokenGuard, RolesGuard)
   @Post()
   create(@Body() createProductDto: CreateProductDto) {
     return this.productsService.create(createProductDto);
   }
 
+  @HasRoles(Role.Admin, Role.User)
+  @UseGuards(AccessTokenGuard, RolesGuard)
   @Get()
   findAll() {
     return this.productsService.findAll();
   }
 
+  @HasRoles(Role.Admin, Role.User)
+  @UseGuards(AccessTokenGuard, RolesGuard)
   @Get(':id')
   findOne(@Param('id', MongoIdPipe) id: mongoose.Types.ObjectId) {
     return this.productsService.findOne(id);
   }
 
+  @HasRoles(Role.Admin)
+  @UseGuards(AccessTokenGuard, RolesGuard)
   @Put(':id')
   update(
     @Param('id', MongoIdPipe) id: mongoose.Types.ObjectId,
@@ -47,6 +53,8 @@ export class ProductsController {
     return this.productsService.update(id, updateProductDto);
   }
 
+  @HasRoles(Role.Admin)
+  @UseGuards(AccessTokenGuard, RolesGuard)
   @Delete(':id')
   remove(@Param('id', MongoIdPipe) id: mongoose.Types.ObjectId) {
     return this.productsService.remove(id);

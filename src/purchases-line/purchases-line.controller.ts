@@ -6,14 +6,21 @@ import {
   Put,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { PurchasesLineService } from './purchases-line.service';
 import { CreatePurchasesLineDto } from './dto/create-purchases-line.dto';
 import { UpdatePurchasesLineDto } from './dto/update-purchases-line.dto';
 import { MongoIdPipe } from 'src/common/mongo-id.pipe';
 import mongoose from 'mongoose';
+import { HasRoles } from 'src/common/has-decorator.decorator';
+import { Role } from 'src/common/role.enum';
+import { AccessTokenGuard } from 'src/auth/guards/access-token.guard';
+import { RolesGuard } from 'src/auth/guards/role.guard';
 
 @Controller('purchases-line')
+@HasRoles(Role.Admin)
+@UseGuards(AccessTokenGuard, RolesGuard)
 export class PurchasesLineController {
   constructor(private readonly purchasesLineService: PurchasesLineService) {}
 

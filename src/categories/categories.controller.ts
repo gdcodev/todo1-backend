@@ -19,7 +19,7 @@ import { AccessTokenGuard } from 'src/auth/guards/access-token.guard';
 import { RolesGuard } from 'src/auth/guards/role.guard';
 
 @Controller('categories')
-@HasRoles(Role.Admin)
+@HasRoles(Role.Admin, Role.User)
 @UseGuards(AccessTokenGuard, RolesGuard)
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
