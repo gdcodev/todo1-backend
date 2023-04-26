@@ -14,7 +14,7 @@ import * as bcrypt from 'bcrypt';
 @Injectable()
 export class CardsService {
   constructor(@InjectModel(Card.name) private cardModel: Model<CardDocument>) {}
-  async create(createCardDto: CreateCardDto) {
+  async create(createCardDto: any) {
     try {
       const { numberHash, ...rest } = createCardDto;
       const newNumberHash = await bcrypt.hash(
@@ -87,6 +87,24 @@ export class CardsService {
       await this.findOne(id);
       const deletedCard = await this.cardModel.findByIdAndRemove(id);
       return deletedCard;
+    } catch (error) {
+      throw new HttpException(
+        error.message,
+        error.status || HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  async findAllByUser(id: mongoose.Types.ObjectId) {
+    try {
+      const cards = await this.cardModel.find({ user: id });
+      const result = cards.map((item) => {
+        return {
+          _id: item._id,
+          lastFourNumbers: item.lastFourNumbers,
+        };
+      });
+      return result;
     } catch (error) {
       throw new HttpException(
         error.message,

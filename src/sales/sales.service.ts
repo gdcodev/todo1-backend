@@ -9,14 +9,69 @@ import { UpdateSaleDto } from './dto/update-sale.dto';
 import mongoose, { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Sale, SaleDocument } from './schemas/sale.schema';
+import { PaymentMethod } from '../common/payment-method.enum';
+import { CardsService } from 'src/cards/cards.service';
+import { ProductsService } from 'src/products/products.service';
+import { SalesLineService } from 'src/sales-line/sales-line.service';
 
 @Injectable()
 export class SalesService {
-  constructor(@InjectModel(Sale.name) private saleModel: Model<SaleDocument>) {}
+  constructor(
+    @InjectModel(Sale.name) private saleModel: Model<SaleDocument>,
+    private cardService: CardsService,
+    private productService: ProductsService,
+    private salesLineService: SalesLineService,
+  ) {}
   async create(createSaleDto: CreateSaleDto) {
     try {
-      const newSale = new this.saleModel(createSaleDto);
+      const { paymentMethod, userId, cart, cardId, cardForm } = createSaleDto;
+      const total = cart.reduce(
+        (acc, curr) => curr.amount * curr.price + acc,
+        0,
+      );
+      const data: any = {
+        paymentMethod,
+        user: userId,
+        total,
+      };
+
+      if (paymentMethod === PaymentMethod.Card) {
+        if (cardId) {
+          data.card = cardId;
+        } else {
+          if (Object.keys(cardForm).length > 0) {
+            const card = await this.cardService.create({
+              ...cardForm,
+              user: userId,
+            });
+            data.card = card._id;
+          } else {
+            throw new NotFoundException('Error with card info');
+          }
+        }
+      }
+      const newSale = new this.saleModel(data);
       const createdSale = await newSale.save();
+
+      if (Object.keys(createdSale).length > 0) {
+        await Promise.all(
+          cart.map(async (item) => {
+            const data = {
+              quantity: item.amount,
+              subtotal: item.price * item.amount,
+              product: item.id,
+              sale: createdSale._id,
+            };
+            await this.salesLineService.create(data);
+          }),
+        );
+
+        await Promise.all(
+          cart.map(async (item) => {
+            await this.productService.updateStock(item.id, item);
+          }),
+        );
+      }
       return createdSale;
     } catch (error) {
       throw new HttpException(

@@ -30,7 +30,9 @@ export class ProductsService {
 
   async findAll() {
     try {
-      const products = await this.productModel.find().populate('category');
+      const products = await this.productModel
+        .find({ stock: { $gt: 0 } })
+        .populate('category');
       return products;
     } catch (error) {
       throw new HttpException(
@@ -82,6 +84,28 @@ export class ProductsService {
       await this.findOne(id);
       const deletedProduct = await this.productModel.findByIdAndRemove(id);
       return deletedProduct;
+    } catch (error) {
+      throw new HttpException(
+        error.message,
+        error.status || HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  async updateStock(id: mongoose.Types.ObjectId, updateProductDto: any) {
+    try {
+      const { id, amount } = updateProductDto;
+      const product = await this.findOne(id);
+      const updatedStock = product.stock - Number.parseFloat(amount);
+
+      const updatedProduct = await this.productModel.findByIdAndUpdate(
+        id,
+        { stock: updatedStock },
+        {
+          new: true,
+        },
+      );
+      return updatedProduct;
     } catch (error) {
       throw new HttpException(
         error.message,

@@ -16,7 +16,7 @@ export class SalesLineService {
     @InjectModel(SalesLine.name)
     private salesLineModel: Model<SalesLineDocument>,
   ) {}
-  async create(createSalesLineDto: CreateSalesLineDto) {
+  async create(createSalesLineDto: any) {
     try {
       const newSalesLine = new this.salesLineModel(createSalesLineDto);
       const createdSalesLine = await newSalesLine.save();

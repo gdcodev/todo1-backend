@@ -44,4 +44,9 @@ export class CardsController {
   remove(@Param('id', MongoIdPipe) id: mongoose.Types.ObjectId) {
     return this.cardsService.remove(id);
   }
+
+  @Get('user/:id')
+  findAllByUser(@Param('id', MongoIdPipe) id: mongoose.Types.ObjectId) {
+    return this.cardsService.findAllByUser(id);
+  }
 }

@@ -1,10 +1,13 @@
-import { IsString, IsNotEmpty, IsOptional, IsEnum } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsOptional,
+  IsEnum,
+  IsArray,
+  IsObject,
+} from 'class-validator';
 import { PaymentMethod } from 'src/common/payment-method.enum';
 export class CreateSaleDto {
-  @IsString()
-  @IsNotEmpty()
-  total: string;
-
   @IsOptional()
   @IsEnum([PaymentMethod.Cash, PaymentMethod.Card])
   @IsNotEmpty()
@@ -12,9 +15,16 @@ export class CreateSaleDto {
 
   @IsString()
   @IsNotEmpty()
-  user: string;
+  userId: string;
 
+  @IsOptional()
   @IsString()
   @IsNotEmpty()
-  card: string;
+  cardId: string;
+
+  @IsArray()
+  cart;
+
+  @IsObject()
+  cardForm;
 }
